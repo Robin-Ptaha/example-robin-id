@@ -1,9 +1,9 @@
-version: "2.3"
+version: "3.8"
 
 services:
     postgres:
         container_name: service-postgres
-        image: postgres:12
+        image: postgres:16
         environment: &db_env
           POSTGRES_DB: RobinID_db_1
           POSTGRES_USER: user
