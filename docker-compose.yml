@@ -3,27 +3,39 @@ version: "3.8"
 services:
     postgres:
         container_name: service-postgres
-        image: postgres:16
+        image: postgres:17
         environment: &db_env
-          POSTGRES_DB: RobinID_db_1
-          POSTGRES_USER: user
-          POSTGRES_PASSWORD: password
+            POSTGRES_DB: RobinID_db_1
+            POSTGRES_USER: user
+            POSTGRES_PASSWORD: password
         ports:
           - 5432
         volumes:
           - ./postgresql/schemas:/docker-entrypoint-initdb.d
-          - ./.pgdata:/var/lib/postgresql/data
+          - /home/vlad/Documents/DataRobinID/.pgdata:/var/lib/postgresql/data
         networks:
           - postgres
+
+    pgadmin:
+        image: dpage/pgadmin4
+        container_name: pgadmin_container
+        environment:
+            PGADMIN_DEFAULT_EMAIL: admin@admin.com
+            PGADMIN_DEFAULT_PASSWORD: adminpassword123
+        ports:
+          - "5050:80"
+        networks:
+          - postgres
+
 
     RobinID-container:
         image: ghcr.io/userver-framework/ubuntu-22.04-userver-pg:latest
         privileged: true
         environment:
-          <<: *db_env
-          PREFIX: ${PREFIX:-~/.local}
-          CCACHE_DIR: /RobinID/.ccache
-          CORES_DIR: /cores
+            <<: *db_env
+            PREFIX: ${PREFIX:-~/.local}
+            CCACHE_DIR: /RobinID/.ccache
+            CORES_DIR: /cores
         volumes:
           - .:/RobinID:rw
           - ${TC_CORES_DIR:-./.cores}:/cores:rw
@@ -40,3 +52,6 @@ services:
 networks:
     postgres:
         driver: bridge
+        ipam:
+            config:
+              - subnet: 172.50.0.0/21

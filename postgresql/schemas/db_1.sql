@@ -1,8 +1,12 @@
-DROP SCHEMA IF EXISTS hello_schema CASCADE;
+create extension if not exists citext;
+create extension if not exists pgcrypto;
 
-CREATE SCHEMA IF NOT EXISTS hello_schema;
+drop schema if exists robinid cascade;
+create schema if not exists robinid;
 
-CREATE TABLE IF NOT EXISTS hello_schema.users (
-    name TEXT PRIMARY KEY,
-    count INTEGER DEFAULT(1)
+create table if not exists robinid.users (
+    id uuid primary key default gen_random_uuid(),
+    username citext unique not null,
+    email varchar(255) not null,
+    password_hash varchar(255) not null
 );

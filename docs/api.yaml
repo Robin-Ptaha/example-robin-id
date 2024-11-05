@@ -1,0 +1,122 @@
+openapi: 3.0.0
+info:
+  title: Robin-ID Authorization Service
+  version: 1.0.0
+  description: API для авторизации с использованием JWT токенов
+
+paths:
+  /robin-id/auth/v1/signup:
+    post:
+      summary: Регистрация пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+              required:
+                - username
+                - email
+                - password
+      responses:
+        '201':
+          description: Успешная регистрация
+        '400':
+          description: Неверные данные
+
+  /robin-id/auth/v1/login:
+    post:
+      summary: Аутентификация пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          description: Успешная аутентификация
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  refresh_token:
+                    type: string
+        '401':
+          description: Неверные учетные данные
+
+  /robin-id/auth/v1/refresh:
+    post:
+      summary: Обновление JWT токена
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refresh_token:
+                  type: string
+              required:
+                - refresh_token
+      responses:
+        '200':
+          description: Новый JWT токен
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+        '401':
+          description: Неверный или истекший refresh-токен
+
+  /robin-id/auth/v1/check:
+    get:
+      summary: Проверка авторизации по токену
+      description: Проверяет, что токен валиден, и возвращает `user_id`, если пользователь авторизован.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Пользователь авторизован
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_id:
+                    type: string
+                    format: uuid
+        '401':
+          description: Неверный или истекший JWT токен
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
