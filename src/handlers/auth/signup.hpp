@@ -10,18 +10,16 @@
 namespace RobinID::auth::v1::signup::post {
 
 class Handler final : public userver::server::handlers::HttpHandlerJsonBase {
-public:
+   public:
     static constexpr std::string_view kName = "auth-v1-signup";
 
-    Handler(const userver::components::ComponentConfig& config,
-            const userver::components::ComponentContext& context);
+    Handler(const userver::components::ComponentConfig& config, const userver::components::ComponentContext& context);
 
     userver::formats::json::Value HandleRequestJsonThrow(
-        const userver::server::http::HttpRequest& request,
-        const userver::formats::json::Value&,
+        const userver::server::http::HttpRequest& request, const userver::formats::json::Value&,
         userver::server::request::RequestContext& request_context) const override final;
 
-private:
+   private:
     const userver::storages::postgres::ClusterPtr pg_cluster_;
 };
 

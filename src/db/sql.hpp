@@ -4,7 +4,7 @@
 
 namespace RobinID::db::sql {
 
-inline constexpr std::string_view kCreateUser {R"~(
+inline constexpr std::string_view kCreateUser{R"~(
 INSERT INTO
     robinid.users (username, email, password_hash)
 VALUES

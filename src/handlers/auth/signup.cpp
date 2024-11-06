@@ -10,10 +10,10 @@
 
 #include <bcrypt/BCrypt.hpp>
 
-#include "../../common/utils.hpp"
 #include "../../common/errors.hpp"
-#include "../../dto/http_models.hpp"
+#include "../../common/utils.hpp"
 #include "../../db/sql.hpp"
+#include "../../dto/http_models.hpp"
 
 namespace RobinID::auth::v1::signup::post {
 
@@ -31,21 +31,14 @@ dto::AuthV1SignupPostRequest ParseRequest(const userver::formats::json::Value& d
 
 }  // namespace
 
-Handler::Handler(
-    const userver::components::ComponentConfig& config,
-    const userver::components::ComponentContext& context
-) : userver::server::handlers::HttpHandlerJsonBase(config, context),
-    pg_cluster_(
-        context
-            .FindComponent<userver::components::Postgres>("postgres-db-1")
-            .GetCluster()
-    ) {}
+Handler::Handler(const userver::components::ComponentConfig& config,
+                 const userver::components::ComponentContext& context)
+    : userver::server::handlers::HttpHandlerJsonBase(config, context),
+      pg_cluster_(context.FindComponent<userver::components::Postgres>("postgres-db-1").GetCluster()) {}
 
-userver::formats::json::Value Handler::HandleRequestJsonThrow(
-    const userver::server::http::HttpRequest& request,
-    const userver::formats::json::Value& request_json,
-    userver::server::request::RequestContext&
-) const {
+userver::formats::json::Value Handler::HandleRequestJsonThrow(const userver::server::http::HttpRequest& request,
+                                                              const userver::formats::json::Value& request_json,
+                                                              userver::server::request::RequestContext&) const {
     dto::AuthV1SignupPostRequest post_request;
     try {
         post_request = ParseRequest(request_json);
@@ -57,13 +50,9 @@ userver::formats::json::Value Handler::HandleRequestJsonThrow(
     std::string user_id;
     try {
         const auto password_hash = BCrypt::generateHash(post_request.password_);
-        const auto db_result = pg_cluster_->Execute(
-            userver::storages::postgres::ClusterHostType::kMaster,
-            db::sql::kCreateUser.data(),
-            post_request.username_,
-            post_request.email_,
-            password_hash
-        );
+        const auto db_result =
+            pg_cluster_->Execute(userver::storages::postgres::ClusterHostType::kMaster, db::sql::kCreateUser.data(),
+                                 post_request.username_, post_request.email_, password_hash);
 
         user_id = db_result.AsSingleRow<std::string>();
     } catch (const userver::storages::postgres::UniqueViolation& ex) {
