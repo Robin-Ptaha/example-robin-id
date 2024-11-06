@@ -1,14 +1,10 @@
 #include "signup.hpp"
 
-#include <fmt/format.h>
-
 #include <userver/components/component.hpp>
-#include <userver/server/handlers/http_handler_json_base.hpp>
-#include <userver/storages/postgres/cluster.hpp>
 #include <userver/storages/postgres/component.hpp>
-#include <userver/utils/assert.hpp>
+#include <userver/crypto/hash.hpp>
 
-#include <bcrypt/BCrypt.hpp>
+// #include <bcrypt/BCrypt.hpp>
 
 #include "../../common/errors.hpp"
 #include "../../common/utils.hpp"
@@ -20,13 +16,13 @@ namespace RobinID::auth::v1::signup::post {
 namespace {
 
 dto::AuthV1SignupPostRequest ParseRequest(const userver::formats::json::Value& data) {
-    dto::AuthV1SignupPostRequest post_request;
+    dto::AuthV1SignupPostRequest signup_request;
 
-    post_request.email_ = utils::ValidateEmail(data, "email");
-    post_request.username_ = utils::ValidateUsername(data, "username");
-    post_request.password_ = utils::CheckSize(data, "password", 8, 255);
+    signup_request.email_ = utils::ValidateEmail(data, "email");
+    signup_request.username_ = utils::ValidateUsername(data, "username");
+    signup_request.password_ = utils::ValidatePassword(data, "password");
 
-    return post_request;
+    return signup_request;
 }
 
 }  // namespace
@@ -34,14 +30,16 @@ dto::AuthV1SignupPostRequest ParseRequest(const userver::formats::json::Value& d
 Handler::Handler(const userver::components::ComponentConfig& config,
                  const userver::components::ComponentContext& context)
     : userver::server::handlers::HttpHandlerJsonBase(config, context),
-      pg_cluster_(context.FindComponent<userver::components::Postgres>("postgres-db-1").GetCluster()) {}
+      pg_cluster_(
+          context.FindComponent<userver::components::Postgres>("postgres-db-1").GetCluster()) {}
 
-userver::formats::json::Value Handler::HandleRequestJsonThrow(const userver::server::http::HttpRequest& request,
-                                                              const userver::formats::json::Value& request_json,
-                                                              userver::server::request::RequestContext&) const {
-    dto::AuthV1SignupPostRequest post_request;
+userver::formats::json::Value Handler::HandleRequestJsonThrow(
+    const userver::server::http::HttpRequest& request,
+    const userver::formats::json::Value& request_json,
+    userver::server::request::RequestContext&) const {
+    dto::AuthV1SignupPostRequest signup_request;
     try {
-        post_request = ParseRequest(request_json);
+        signup_request = ParseRequest(request_json);
     } catch (const errors::ValidationError& ex) {
         request.SetResponseStatus(userver::server::http::HttpStatus::kUnprocessableEntity);
         return ex.ToJson();
@@ -49,10 +47,11 @@ userver::formats::json::Value Handler::HandleRequestJsonThrow(const userver::ser
 
     std::string user_id;
     try {
-        const auto password_hash = BCrypt::generateHash(post_request.password_);
-        const auto db_result =
-            pg_cluster_->Execute(userver::storages::postgres::ClusterHostType::kMaster, db::sql::kCreateUser.data(),
-                                 post_request.username_, post_request.email_, password_hash);
+        // const auto password_hash = BCrypt::generateHash(signup_request.password_);
+        const auto password_hash = userver::crypto::hash::Sha256(signup_request.password_);
+        const auto db_result = pg_cluster_->Execute(
+            userver::storages::postgres::ClusterHostType::kMaster, db::sql::kCreateUser.data(),
+            signup_request.username_, signup_request.email_, password_hash);
 
         user_id = db_result.AsSingleRow<std::string>();
     } catch (const userver::storages::postgres::UniqueViolation& ex) {

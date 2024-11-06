@@ -10,4 +10,9 @@ struct AuthV1SignupPostRequest final {
     std::string password_;
 };
 
+struct AuthV1LoginPostRequest final {
+    std::string username_;
+    std::string password_;
+};
+
 }  // namespace RobinID::dto

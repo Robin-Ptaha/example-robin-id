@@ -6,7 +6,10 @@
 #include <userver/storages/postgres/component.hpp>
 #include <userver/testsuite/testsuite_support.hpp>
 #include <userver/utils/daemon_run.hpp>
+#include <userver/storages/secdist/component.hpp>
+#include <userver/storages/secdist/provider_component.hpp>
 
+#include "handlers/auth/login.hpp"
 #include "handlers/auth/signup.hpp"
 
 int main(int argc, char* argv[]) {
@@ -17,7 +20,10 @@ int main(int argc, char* argv[]) {
                               .Append<userver::server::handlers::TestsControl>()
                               .Append<userver::components::Postgres>("postgres-db-1")
                               .Append<userver::clients::dns::Component>()
-                              .Append<RobinID::auth::v1::signup::post::Handler>();
+                              .Append<userver::components::Secdist>()
+                              .Append<userver::components::DefaultSecdistProvider>()
+                              .Append<RobinID::auth::v1::signup::post::Handler>()
+                              .Append<RobinID::auth::v1::login::post::Handler>();
 
     return userver::utils::DaemonMain(argc, argv, component_list);
 }

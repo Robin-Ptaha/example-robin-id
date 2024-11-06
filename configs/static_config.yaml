@@ -55,6 +55,11 @@ components_manager:
             method: POST
             task_processor: main-task-processor
 
+        auth-v1-login:
+            path: /robin-id/auth/v1/login
+            method: POST
+            task_processor: main-task-processor
+
         postgres-db-1:
             dbconnection: $dbconnection
             dbconnection#env: DB_CONNECTION
@@ -62,6 +67,10 @@ components_manager:
             dns_resolver: async
             sync-start: false
             connlimit_mode: manual
+
+        secdist: {}
+        default-secdist-provider:
+            config: '/RobinID/configs/jwt_config.json'
 
         dns-client:
             fs-task-processor: fs-task-processor

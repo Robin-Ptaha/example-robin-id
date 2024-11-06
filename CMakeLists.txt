@@ -23,20 +23,33 @@ endif()
 
 userver_setup_environment()
 
+add_subdirectory(${CMAKE_SOURCE_DIR}/third_party/jwt-cpp)
+
 add_subdirectory(${CMAKE_SOURCE_DIR}/third_party/libbcrypt)
 
 # Common sources
 add_library(${PROJECT_NAME}_objs OBJECT
     src/handlers/auth/signup.hpp
     src/handlers/auth/signup.cpp
+    src/handlers/auth/login.hpp
+    src/handlers/auth/login.cpp
     src/common/errors.cpp
     src/common/errors.hpp
     src/common/utils.cpp
     src/common/utils.hpp
+    src/common/jwt.cpp
+    src/common/jwt.hpp
+    src/common/consts.hpp
+    src/models/user.hpp
     src/db/sql.hpp
     src/dto/http_models.hpp
+    src/dto/user.hpp
+    src/dto/user.cpp
 )
 target_link_libraries(${PROJECT_NAME}_objs PUBLIC userver::postgresql)
+
+target_include_directories(${PROJECT_NAME}_objs PUBLIC jwt-cpp)
+target_link_libraries(${PROJECT_NAME}_objs PUBLIC jwt-cpp)
 
 target_include_directories(${PROJECT_NAME}_objs PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/third_party/libbcrypt/include)
 target_link_libraries(${PROJECT_NAME}_objs PUBLIC bcrypt)
@@ -76,6 +89,8 @@ if(DEFINED ENV{PREFIX})
   file(TO_CMAKE_PATH "$ENV{PREFIX}" PREFIX_PATH)
   set(CMAKE_INSTALL_PREFIX ${PREFIX_PATH})
 endif()
+
+set(CONFIG_JWT ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_SYSCONFDIR}/${PROJECT_NAME}/jwt_config.json)
 
 file(GLOB CONFIGS_FILES ${CMAKE_CURRENT_SOURCE_DIR}/configs/*.yaml ${CMAKE_CURRENT_SOURCE_DIR}/configs/*.json)
 
