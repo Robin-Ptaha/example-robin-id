@@ -29,20 +29,24 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/third_party/libbcrypt)
 
 # Common sources
 add_library(${PROJECT_NAME}_objs OBJECT
-    src/handlers/auth/signup.hpp
-    src/handlers/auth/signup.cpp
-    src/handlers/auth/login.hpp
-    src/handlers/auth/login.cpp
-    src/common/errors.cpp
-    src/common/errors.hpp
-    src/common/utils.cpp
-    src/common/utils.hpp
-    src/common/jwt.cpp
-    src/common/jwt.hpp
-    src/common/consts.hpp
-    src/models/user.hpp
+    src/handlers/auth/auth_bearer.hpp
+    src/handlers/auth/auth_bearer.cpp
+    src/handlers/users/signup.hpp
+    src/handlers/users/signup.cpp
+    src/handlers/users/login.hpp
+    src/handlers/users/login.cpp
+    src/handlers/users/profile.hpp
+    src/handlers/users/profile.cpp
+    src/utils/errors.cpp
+    src/utils/errors.hpp
+    src/utils/utils.cpp
+    src/utils/utils.hpp
+    src/utils/jwt.cpp
+    src/utils/jwt.hpp
+    src/utils/validators.cpp
+    src/utils/validators.hpp
     src/db/sql.hpp
-    src/dto/http_models.hpp
+    src/db/types.hpp
     src/dto/user.hpp
     src/dto/user.cpp
 )

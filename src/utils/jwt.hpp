@@ -5,6 +5,8 @@
 
 namespace RobinID::jwt {
 
+using DecodedToken = ::jwt::decoded_jwt<::jwt::traits::kazuho_picojson>;
+
 struct JWTConfig final {
     JWTConfig(const userver::formats::json::Value& config);
 
@@ -18,7 +20,7 @@ public:
 
     std::string GenerateToken(std::string user_id) const;
 
-    void VerifyToken(const ::jwt::decoded_jwt<::jwt::traits::kazuho_picojson>& token) const;
+    void VerifyToken(const DecodedToken& token) const;
 
 private:
     const JWTConfig config_;

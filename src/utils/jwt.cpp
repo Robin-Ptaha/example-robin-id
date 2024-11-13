@@ -21,7 +21,7 @@ std::string JWTManager::GenerateToken(std::string user_id) const {
         .sign(::jwt::algorithm::hs256{config_.secret_key_});
 }
 
-void JWTManager::VerifyToken(const ::jwt::decoded_jwt<::jwt::traits::kazuho_picojson>& decoded_token) const {
+void JWTManager::VerifyToken(const DecodedToken& decoded_token) const {
     verifier_.verify(decoded_token);
 }
 

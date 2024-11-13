@@ -1,4 +1,6 @@
-# RobinID
+# Example of RobinID
+
+**WARNING: THIS IS ONLY EXAMPLE**
 
 Template of a C++ service that uses [userver framework](https://github.com/userver-framework/userver) with PostgreSQL.
 

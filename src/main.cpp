@@ -9,10 +9,16 @@
 #include <userver/storages/secdist/component.hpp>
 #include <userver/storages/secdist/provider_component.hpp>
 
-#include "handlers/auth/login.hpp"
-#include "handlers/auth/signup.hpp"
+#include "handlers/auth/auth_bearer.hpp"
+
+#include "handlers/users/login.hpp"
+#include "handlers/users/signup.hpp"
+#include "handlers/users/profile.hpp"
 
 int main(int argc, char* argv[]) {
+    userver::server::handlers::auth::RegisterAuthCheckerFactory(
+        "bearer", std::make_unique<RobinID::auth::CheckerFactory>());
+
     auto component_list = userver::components::MinimalServerComponentList()
                               .Append<userver::server::handlers::Ping>()
                               .Append<userver::components::TestsuiteSupport>()
@@ -22,8 +28,9 @@ int main(int argc, char* argv[]) {
                               .Append<userver::clients::dns::Component>()
                               .Append<userver::components::Secdist>()
                               .Append<userver::components::DefaultSecdistProvider>()
-                              .Append<RobinID::auth::v1::signup::post::Handler>()
-                              .Append<RobinID::auth::v1::login::post::Handler>();
+                              .Append<RobinID::users::v1::signup::post::Handler>()
+                              .Append<RobinID::users::v1::login::post::Handler>()
+                              .Append<RobinID::users::v1::profile::get::Handler>();
 
     return userver::utils::DaemonMain(argc, argv, component_list);
 }

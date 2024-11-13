@@ -1,66 +1,59 @@
-create extension if not exists citext;
-create extension if not exists pgcrypto;
+CREATE EXTENSION IF NOT EXISTS citext;
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
+DROP SCHEMA IF EXISTS robinid CASCADE;
+CREATE SCHEMA IF NOT EXISTS robinid;
 
-drop schema if exists robinid cascade;
-create schema if not exists robinid;
-
-
-create table if not exists robinid.users (
-    id uuid primary key default gen_random_uuid(),
-    username citext unique not null,
-    email varchar(255) not null,
-    password_hash varchar(255) not null
+CREATE TABLE IF NOT EXISTS robinid.users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    username CITEXT UNIQUE NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    password_hash VARCHAR(255) NOT NULL
 );
 
 
-create type robinid.user as (
-    id text,
-    username citext,
-    email varchar(255),
-    password_hash varchar(255)
+CREATE TYPE robinid.user AS (
+    id TEXT,
+    username CITEXT,
+    email VARCHAR(255),
+    password_hash VARCHAR(255)
 );
 
 
-create or replace function robinid.add_new_user(
-    _username citext,
-    _email varchar(255),
-    _password_hash varchar(255)
+CREATE OR REPLACE FUNCTION robinid.add_new_user(
+    _username CITEXT,
+    _email VARCHAR(255),
+    _password_hash VARCHAR(255)
 )
-returns text
-as $$
-declare
-    _user_id text;
-begin
-    insert into
-        robinid.users(username, email, password_hash)
-    values
-        (_username, _email, _password_hash)
-    returning
-        id
-    into
-        _user_id;
+RETURNS TEXT
+AS $$
+DECLARE
+    _user_id TEXT;
+BEGIN
+    INSERT INTO robinid.users (username, email, password_hash)
+    VALUES (_username, _email, _password_hash)
+    RETURNING id INTO _user_id;
 
-    return _user_id::text;
-end;
-$$ language plpgsql;
+    RETURN _user_id::TEXT;
+END;
+$$ LANGUAGE plpgsql;
 
 
-create or replace function robinid.get_user_by_username(
-    _username citext
+CREATE OR REPLACE FUNCTION robinid.get_user_by_username(
+    _username CITEXT
 )
-returns setof robinid.user
-as $$
-begin
-    return query
-    select
-        id::text,
+RETURNS SETOF robinid.user
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        id::TEXT,
         username,
         email,
         password_hash
-    from
+    FROM
         robinid.users
-    where
+    WHERE
         username = _username;
-end;
-$$ language plpgsql;
+END;
+$$ LANGUAGE plpgsql;
