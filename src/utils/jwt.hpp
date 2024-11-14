@@ -15,16 +15,17 @@ struct JWTConfig final {
 };
 
 class JWTManager final {
-public:
+   public:
     JWTManager(const JWTConfig& config);
 
     std::string GenerateToken(std::string user_id) const;
 
     void VerifyToken(const DecodedToken& token) const;
 
-private:
+   private:
     const JWTConfig config_;
-    ::jwt::verifier<::jwt::default_clock, ::jwt::traits::kazuho_picojson> verifier_{::jwt::verify()};
+    ::jwt::verifier<::jwt::default_clock, ::jwt::traits::kazuho_picojson> verifier_{
+        ::jwt::verify()};
 };
 
 }  // namespace RobinID::jwt

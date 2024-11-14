@@ -3,7 +3,7 @@
 #include <userver/formats/json.hpp>
 
 namespace RobinID::utils::validators {
-    
+
 const std::string ValidateEmail(const userver::formats::json::Value& data,
                                 std::string_view field_name);
 const std::string ValidateUsername(std::string_view username);

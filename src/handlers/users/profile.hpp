@@ -14,7 +14,7 @@ class Handler final : public userver::server::handlers::HttpHandlerJsonBase {
 
     userver::formats::json::Value HandleRequestJsonThrow(
         const userver::server::http::HttpRequest& request,
-        const userver::formats::json::Value&, // request_json,
+        const userver::formats::json::Value&,  // request_json,
         userver::server::request::RequestContext& request_context) const override final;
 
    private:

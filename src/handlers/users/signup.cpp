@@ -5,9 +5,9 @@
 
 #include <bcrypt/BCrypt.hpp>
 
-#include "../../utils/errors.hpp"
 #include "../../db/sql.hpp"
 #include "../../dto/user.hpp"
+#include "../../utils/errors.hpp"
 
 namespace RobinID::users::v1::signup::post {
 

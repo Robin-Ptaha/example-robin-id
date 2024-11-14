@@ -11,15 +11,16 @@ namespace RobinID::utils {
 namespace {
 
 // email
-inline const std::regex kEmailPattern {"(\\w+)(\\.|_)?(\\w*)@(\\w+)(\\.(\\w+))+"};
+inline const std::regex kEmailPattern{"(\\w+)(\\.|_)?(\\w*)@(\\w+)(\\.(\\w+))+"};
 
 // username
-inline const std::regex kUsernamePattern {"^[a-zA-Z0-9_]+$"};
+inline const std::regex kUsernamePattern{"^[a-zA-Z0-9_]+$"};
 inline const int kUsernameLengthMin = 3;
 inline const int kUsernameLengthMax = 32;
 
 // password
-inline const std::regex kPasswordPattern {"^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]+$"};
+inline const std::regex kPasswordPattern{
+    "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]+$"};
 inline const int kPasswordLengthMin = 8;
 inline const int kPasswordLengthMax = 256;
 
@@ -80,7 +81,9 @@ const std::string ValidatePassword(const userver::formats::json::Value& data,
         return CheckSize(password, field_name, kPasswordLengthMin, kPasswordLengthMax);
     }
 
-    throw errors::ValidationError{std::string{field_name}, "at least one uppercase letter, one lowercase letter, one number and one special character"};
+    throw errors::ValidationError{std::string{field_name},
+                                  "at least one uppercase letter, one lowercase letter, one number "
+                                  "and one special character"};
 }
 
 const std::string CheckSize(const userver::formats::json::Value& data, std::string_view field_name,

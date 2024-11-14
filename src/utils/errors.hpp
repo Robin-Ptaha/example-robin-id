@@ -6,8 +6,8 @@
 namespace RobinID::utils::errors {
 
 class ValidationError : public userver::server::handlers::ExceptionWithCode<
-        userver::server::handlers::HandlerErrorCode::kRequestParseError> {
-public:
+                            userver::server::handlers::HandlerErrorCode::kRequestParseError> {
+   public:
     ValidationError(std::string_view field_name, std::string_view message);
 
     explicit ValidationError(userver::formats::json::Value&& json);
@@ -15,4 +15,4 @@ public:
 
 userver::formats::json::Value MakeError(std::string_view field_name, std::string_view message);
 
-}  // namespace RobinID::errors
+}  // namespace RobinID::utils::errors

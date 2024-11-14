@@ -30,7 +30,6 @@ UsersV1LoginRequest Parse(const userver::formats::json::Value& json,
 
 userver::formats::json::Value Serialize(
     const UsersProfileResponse& data,
-    userver::formats::serialize::To<userver::formats::json::Value>
-);
+    userver::formats::serialize::To<userver::formats::json::Value>);
 
 }  // namespace RobinID::dto

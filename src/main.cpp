@@ -4,16 +4,16 @@
 #include <userver/server/handlers/ping.hpp>
 #include <userver/server/handlers/tests_control.hpp>
 #include <userver/storages/postgres/component.hpp>
-#include <userver/testsuite/testsuite_support.hpp>
-#include <userver/utils/daemon_run.hpp>
 #include <userver/storages/secdist/component.hpp>
 #include <userver/storages/secdist/provider_component.hpp>
+#include <userver/testsuite/testsuite_support.hpp>
+#include <userver/utils/daemon_run.hpp>
 
 #include "handlers/auth/auth_bearer.hpp"
 
 #include "handlers/users/login.hpp"
-#include "handlers/users/signup.hpp"
 #include "handlers/users/profile.hpp"
+#include "handlers/users/signup.hpp"
 
 int main(int argc, char* argv[]) {
     userver::server::handlers::auth::RegisterAuthCheckerFactory(

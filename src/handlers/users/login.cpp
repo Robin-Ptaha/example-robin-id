@@ -6,10 +6,10 @@
 
 #include <bcrypt/BCrypt.hpp>
 
-#include "../../utils/errors.hpp"
-#include "../../dto/user.hpp"
 #include "../../db/sql.hpp"
 #include "../../db/types.hpp"
+#include "../../dto/user.hpp"
+#include "../../utils/errors.hpp"
 
 namespace RobinID::users::v1::login::post {
 
@@ -30,10 +30,9 @@ Handler::Handler(const userver::components::ComponentConfig& config,
                  const userver::components::ComponentContext& context)
     : userver::server::handlers::HttpHandlerJsonBase(config, context),
       pg_cluster_(
-          context.FindComponent<userver::components::Postgres>("postgres-db-1").GetCluster())
-          ,
-      jwt_manager_(context.FindComponent<userver::components::Secdist>().Get().Get<jwt::JWTConfig>())
-    {}
+          context.FindComponent<userver::components::Postgres>("postgres-db-1").GetCluster()),
+      jwt_manager_(
+          context.FindComponent<userver::components::Secdist>().Get().Get<jwt::JWTConfig>()) {}
 
 userver::formats::json::Value Handler::HandleRequestJsonThrow(
     const userver::server::http::HttpRequest& request,
@@ -47,11 +46,9 @@ userver::formats::json::Value Handler::HandleRequestJsonThrow(
         return err.GetDetails();
     }
 
-    const auto db_result = pg_cluster_->Execute(
-        userver::storages::postgres::ClusterHostType::kSlave,
-        db::sql::kGetUserByUsername.data(),
-        login_request.username_
-    );
+    const auto db_result =
+        pg_cluster_->Execute(userver::storages::postgres::ClusterHostType::kSlave,
+                             db::sql::kGetUserByUsername.data(), login_request.username_);
     if (db_result.IsEmpty()) {
         request.SetResponseStatus(userver::server::http::HttpStatus::kNotFound);
         return utils::errors::MakeError("username", "invalid");
@@ -63,7 +60,7 @@ userver::formats::json::Value Handler::HandleRequestJsonThrow(
         return utils::errors::MakeError("password", "invalid");
     }
 
-    userver::formats::json::ValueBuilder builder = dto::UsersProfileResponse {
+    userver::formats::json::ValueBuilder builder = dto::UsersProfileResponse{
         std::move(user.id_),
         std::move(user.username_),
         std::move(user.email_),

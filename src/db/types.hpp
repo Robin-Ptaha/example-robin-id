@@ -18,9 +18,9 @@ struct User final {
 
 namespace userver::storages::postgres::io {
 
-template<>
+template <>
 struct CppToUserPg<RobinID::db::types::User> {
-    static constexpr DBTypeName postgres_name {RobinID::db::types::kUser.data()};
+    static constexpr DBTypeName postgres_name{RobinID::db::types::kUser.data()};
 };
 
-}  // namespace userver::stroages::postgres::io
+}  // namespace userver::storages::postgres::io
